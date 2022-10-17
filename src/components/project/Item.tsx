@@ -1,9 +1,8 @@
 import {IItem} from "../../types/IItem";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 import "./item.sass"
 import {fetchItems} from "../fetch/fetchItems";
-import {ItemList} from "../projectList/ItemList";
 
 interface IProps {
     project: IItem
@@ -17,25 +16,24 @@ const url = "http://78.29.34.68:8888/object/"
 const Item: React.FC<IProps> = (props) => {
 
     const {product, id} = props.project
-    const {level} = props
+    const {level, toggle} = props
     const [items, setItems] = useState<IItem[]>([])
-    const [toggle, setToggle] = useState(false)
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        console.log("useEffect")
-        setLoading(true)
-        fetch(`${url}${id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    setToggle(true)
-                } else {
-                    setToggle(false)
-                }
-                setLoading(false)
-            })
-    }, [])
+    // useEffect(() => {
+    //     console.log("useEffect")
+    //     setLoading(true)
+    //     fetch(`${url}${id}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.length > 0) {
+    //                 setToggle(true)
+    //             } else {
+    //                 setToggle(false)
+    //             }
+    //             setLoading(false)
+    //         })
+    // }, [])
 
     const expandTree = () => {
         fetchItems<IItem[]>(`${url}${id}`)
@@ -60,8 +58,6 @@ const Item: React.FC<IProps> = (props) => {
     }
 
     const renderItems = () => {
-
-        console.log("renderItems")
         return (
             <>
                 <li
@@ -99,9 +95,6 @@ const Item: React.FC<IProps> = (props) => {
             </>
         )
     }
-
-    const content = !loading ? renderItems() : null
-
     return (
         <>
             {renderItems()}
