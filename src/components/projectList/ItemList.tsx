@@ -1,9 +1,8 @@
 import {IItem} from "../../types/IItem";
 import React, {useEffect, useState} from "react";
-import {Item} from "../project/Item";
+import {Item} from "../item/Item";
 import {fetchItems} from "../fetch/fetchItems";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+import {query} from "../urls";
 
 interface IProps {
     level: number,
@@ -37,21 +36,20 @@ const ItemList: React.FC<IProps> = (props) => {
                 for (const iItem of response) {
                     promises.push(something(iItem))
                 }
-                console.log(promises.length)
                 Promise.all(promises)
                     .then(() => {
                         setLoading(false)
-                        console.log("promise all")
                     })
             })
             .catch(error => console.log(error))
     }
 
     const something = (item: IItem) => {
-        return fetch(`${url}${item.id}`)
+
+
+        return fetch(`${query}${item.id}`)
             .then(res => res.json())
             .then(data => {
-                console.log("then with data", loading)
                 const dataItems = data as IItem[]
                 if (dataItems.length > 0) {
                     setToggleArr(prevState => [...prevState, {id: item.id, toggle: true}])
@@ -61,13 +59,9 @@ const ItemList: React.FC<IProps> = (props) => {
             })
     }
 
-    const onLoading = () => {
-        setLoading(true)
-    }
-
     const render = () => {
-        console.log("render")
-        return items.map(item => {
+
+        const list = items.map(item => {
             return <Item
                 project={item}
                 key={item.id}
@@ -75,9 +69,15 @@ const ItemList: React.FC<IProps> = (props) => {
                 toggle={toggleArr.find((value) => value.id === item.id)?.toggle || false}
             />
         })
+
+        return (
+            <ul className={"item-list"}>
+                {list}
+            </ul>
+        )
+
     }
 
-    console.log("check", loading)
     const content = !loading ? render() : null
 
     return (

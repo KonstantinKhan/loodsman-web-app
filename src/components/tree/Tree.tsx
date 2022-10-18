@@ -3,8 +3,7 @@ import React, {useEffect} from "react";
 import {ItemList} from "../projectList/ItemList";
 
 import "./tree.sass"
-
-const url = "http://78.29.34.68:8888/object/"
+import {query} from "../urls";
 
 const Tree: React.FC = () => {
 
@@ -16,7 +15,7 @@ const Tree: React.FC = () => {
         <div
             className={"tree"}
         >
-            <ItemList level={1} url={url}/>
+            <ItemList level={1} url={query}/>
         </div>
     )
 }

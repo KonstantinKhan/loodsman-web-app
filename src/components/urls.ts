@@ -1,0 +1,1 @@
+export const query = "http://78.29.34.68:8888/object/"
