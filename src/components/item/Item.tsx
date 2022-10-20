@@ -1,5 +1,5 @@
 import {IItem} from "../../types/IItem";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {query} from "../urls";
 
 import {ItemList} from "../projectList/ItemList";
@@ -15,20 +15,31 @@ interface IProps {
     toggle: boolean,
     icon: string,
     onItemSelected: (item: IItem) => void
+    activeId: number
 }
 
 const Item: React.FC<IProps> = (props) => {
 
+    const {activeId} = props
     const {product, id} = props.item
     const {level, toggle, icon, onItemSelected} = props
     const [toggled, setToggled] = useState(false)
+    const [active, setActive] = useState(false)
+
+    useEffect(() => {
+        if (id === activeId) {
+            setActive(prevState => !prevState)
+        } else {
+            setActive(false)
+        }
+    }, [onItemSelected])
 
     const expand = () => {
         setToggled(prevState => !prevState)
     }
 
     const renderItems = () => {
-        return <ItemList level={level} url={query + id} onItemSelected={onItemSelected}/>
+        return <ItemList level={level} url={query + id} onItemSelected={onItemSelected} activeId={activeId}/>
     }
 
     const content = toggled ? renderItems() : null
@@ -47,7 +58,7 @@ const Item: React.FC<IProps> = (props) => {
                     }}
                     key={id}
                 >
-                    <div className={"item__block"}>
+                    <div className={!active ? "item__block" : "item__block item__block_active"}>
                         {
                             toggle ?
                                 <div

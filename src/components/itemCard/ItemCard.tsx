@@ -1,6 +1,7 @@
 import {IItem} from "../../types/IItem";
 
 import "./itemCard.sass"
+import {PropertyRow} from "../PropertyRow/PropertyRow";
 
 interface IProps {
     item: IItem
@@ -14,10 +15,19 @@ export const ItemCard = (props: IProps) => {
         <div
             className={"itemCard"}
         >
-            <ul>
-                <li>{product}</li>
+            <span
+                className={"itemCard__title"}
+            >
+                {product}
+            </span>
+            <ul
+                className={"itemCard__properties"}
+            >
                 {
-                    Object.entries(atributesObject).map((value, index) => <li key={index}>{value[0]} : {value[1]}</li>)
+                    Object.entries(atributesObject).map(value => {
+                        console.log(value)
+                        return <PropertyRow first={value[0]} second={value[1]}/>
+                    })
                 }
             </ul>
         </div>

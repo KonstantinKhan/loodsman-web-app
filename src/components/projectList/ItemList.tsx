@@ -8,7 +8,8 @@ import {queryIcons} from "../urls";
 interface IProps {
     level: number,
     url: string,
-    onItemSelected: (item: IItem) => void
+    onItemSelected: (item: IItem) => void,
+    activeId: number
 }
 
 interface IToggle {
@@ -23,7 +24,7 @@ interface IIcon {
 
 const ItemList: React.FC<IProps> = (props) => {
 
-    const {level, url, onItemSelected} = props
+    const {level, url, onItemSelected, activeId} = props
 
     const [items, setItems] = useState<IItem[]>([])
     const [loading, setLoading] = useState(true)
@@ -90,6 +91,7 @@ const ItemList: React.FC<IProps> = (props) => {
                 toggle={toggleArr.find((value) => value.id === item.id)?.toggle || false}
                 icon={iconArr.find(value => value.id === item.id)?.icon || ""}
                 onItemSelected={onItemSelected}
+                activeId={activeId}
             />
         })
         return (

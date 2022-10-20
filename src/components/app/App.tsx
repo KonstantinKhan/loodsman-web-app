@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {Tree} from "../tree/Tree";
+import React, {useEffect, useState} from "react";
+import {Tree} from "../Tree/Tree";
 import {ItemCard} from "../itemCard/ItemCard";
 import {IItem} from "../../types/IItem";
 
@@ -25,13 +25,19 @@ const App: React.FC = () => {
         version: undefined
     })
 
+    const [activeId, setActiveId] = useState(0)
+
     const onItemSelected = (item: IItem) => {
         setActiveItem(item)
     }
 
+    useEffect(() => {
+        setActiveId(activeItem.id)
+    }, [activeItem])
+
     return (
         <div>
-            <Tree onItemSelected={onItemSelected}/>
+            <Tree onItemSelected={onItemSelected} activeId={activeId}/>
             <ItemCard item={activeItem}/>
         </div>
     )
