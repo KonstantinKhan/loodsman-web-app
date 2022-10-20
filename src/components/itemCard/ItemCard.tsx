@@ -20,16 +20,15 @@ export const ItemCard = (props: IProps) => {
             >
                 {product}
             </span>
-            <ul
+            <div
                 className={"itemCard__properties"}
             >
                 {
                     Object.entries(atributesObject).map(value => {
-                        console.log(value)
-                        return <PropertyRow first={value[0]} second={value[1]}/>
+                        return <PropertyRow key={value[0]} first={value[0]} second={value[1]}/>
                     })
                 }
-            </ul>
+            </div>
         </div>
     )
 }
