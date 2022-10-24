@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/loodsman-web-app/static/css/main.1131882c.css",
+    "main.js": "/loodsman-web-app/static/js/main.ab507286.js",
+    "static/media/Roboto-Medium.ttf": "/loodsman-web-app/static/media/Roboto-Medium.7c8d04cd831df3033c8a.ttf",
+    "index.html": "/loodsman-web-app/index.html",
+    "main.1131882c.css.map": "/loodsman-web-app/static/css/main.1131882c.css.map",
+    "main.ab507286.js.map": "/loodsman-web-app/static/js/main.ab507286.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1131882c.css",
+    "static/js/main.ab507286.js"
+  ]
+}
