@@ -8,8 +8,8 @@ export interface IItem {
     state: string
     version: any
     dateOfCreate: string
-    atributesObject: AtributesObject
-    atributesRelation: any
+    atributesObject: AttributesObject
+    atributesRelation: AttributeRelation
     idParent: any
     idLinkType: any
     relationName: any
@@ -18,4 +18,6 @@ export interface IItem {
     maxQuantity: any
 }
 
-interface AtributesObject {}
+interface AttributesObject {}
+
+interface AttributeRelation {}

@@ -8,7 +8,7 @@ const App: React.FC = () => {
 
     const [activeItem, setActiveItem] = useState<IItem>({
         atributesObject: {},
-        atributesRelation: undefined,
+        atributesRelation: {},
         dateOfCreate: "",
         id: 0,
         idLinkType: undefined,
@@ -27,9 +27,14 @@ const App: React.FC = () => {
     })
 
     const [activeId, setActiveId] = useState(0)
+    const [showCard, setShowCard] = useState(false)
 
     const onItemSelected = (item: IItem) => {
         setActiveItem(item)
+    }
+
+    const onShowCard = (showCard: boolean) => {
+        setShowCard(showCard)
     }
 
     useEffect(() => {
@@ -39,8 +44,14 @@ const App: React.FC = () => {
     return (
         <div>
             <Search/>
-            <Tree onItemSelected={onItemSelected} activeId={activeId}/>
+            <Tree onItemSelected={onItemSelected} activeId={activeId} onShowCard={onShowCard}/>
             <ItemCard item={activeItem}/>
+            <Tree
+                onItemSelected={onItemSelected}
+                onShowCard={onShowCard}
+                activeId={activeId}
+            />
+            {showCard ? <ItemCard item={activeItem}/> : null}
         </div>
     )
 }

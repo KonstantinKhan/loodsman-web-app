@@ -36,11 +36,13 @@ export const ItemCard = (props: IProps) => {
                         return <PropertyRow key={value[0]} first={value[0]} second={value[1]}/>
                     })
                 }
-                <button
-                    onClick={sendData}
-                >Send data
-                </button>
             </div>
+            <button
+                className={"itemCard__button"}
+                onClick={sendData}
+            >
+                Получить id
+            </button>
         </div>
     )
 }
