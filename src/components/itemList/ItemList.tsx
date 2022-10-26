@@ -9,6 +9,7 @@ interface IProps {
     level: number,
     url: string,
     onItemSelected: (item: IItem) => void,
+    onShowCard: (showCard: boolean) => void,
     activeId: number
 }
 
@@ -24,7 +25,7 @@ interface IIcon {
 
 const ItemList: React.FC<IProps> = (props) => {
 
-    const {level, url, onItemSelected, activeId} = props
+    const {level, url, onItemSelected, onShowCard, activeId} = props
 
     const [items, setItems] = useState<IItem[]>([])
     const [loading, setLoading] = useState(true)
@@ -105,6 +106,7 @@ const ItemList: React.FC<IProps> = (props) => {
                 iconType={iconTypeArr.find(value => value.id === item.id)?.icon || ""}
                 iconState={iconStateArr.find(value => value.id === item.id)?.icon || ""}
                 onItemSelected={onItemSelected}
+                onShowCard={onShowCard}
                 activeId={activeId}
             />
         })
