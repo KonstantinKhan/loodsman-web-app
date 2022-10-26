@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Tree} from "../Tree/Tree";
 import {ItemCard} from "../itemCard/ItemCard";
 import {IItem} from "../../types/IItem";
+import {Search} from "../search/Search";
 
 const App: React.FC = () => {
 
@@ -37,6 +38,7 @@ const App: React.FC = () => {
 
     return (
         <div>
+            <Search/>
             <Tree onItemSelected={onItemSelected} activeId={activeId}/>
             <ItemCard item={activeItem}/>
         </div>
