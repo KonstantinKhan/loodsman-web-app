@@ -2,7 +2,7 @@ import {IItem} from "../../types/IItem";
 import React, {useEffect, useState} from "react";
 import {query} from "../urls";
 
-import {ItemList} from "../projectList/ItemList";
+import {ItemList} from "../itemList/ItemList";
 import arrowRight from "../../icons/arrow-right.png"
 import arrowDown from "../../icons/down-arrow.png"
 
@@ -13,7 +13,8 @@ interface IProps {
     items?: IItem[]
     level: number
     toggle: boolean,
-    icon: string,
+    iconType: string,
+    iconState: string,
     onItemSelected: (item: IItem) => void
     activeId: number
 }
@@ -22,7 +23,7 @@ const Item: React.FC<IProps> = (props) => {
 
     const {activeId} = props
     const {product, id} = props.item
-    const {level, toggle, icon, onItemSelected} = props
+    const {level, toggle, iconType, iconState, onItemSelected} = props
     const [toggled, setToggled] = useState(false)
     const [active, setActive] = useState(false)
 
@@ -81,8 +82,11 @@ const Item: React.FC<IProps> = (props) => {
                                 </div> : null
                         }
                         <img
-                            className={"item__icon"}
-                            src={icon} alt="icon"/>
+                            className={"item__icon-type"}
+                            src={iconType} alt="iconType"/>
+                        <img
+                            className={"item__icon-state"}
+                            src={iconState} alt="iconState"/>
                         <span
                             className={"item__title"}
                             onClick={showInfo}

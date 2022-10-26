@@ -1,5 +1,5 @@
 {
-  "homepage": "https://KonstantinKhan/loodsman-web-app",
+  "homepage": "https://KonstantinKhan.github.io/loodsman-web-app",
   "name": "loodsman-web-app",
   "version": "0.1.0",
   "private": true,
@@ -11,6 +11,7 @@
     "@types/node": "^16.11.65",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -46,5 +47,6 @@
   },
   "devDependencies": {
     "gh-pages": "^4.0.0"
-  }
+  },
+  "proxy": "http://78.29.34.68:8888"
 }

@@ -1,6 +1,6 @@
 import React from "react";
 
-import {ItemList} from "../projectList/ItemList";
+import {ItemList} from "../itemList/ItemList";
 
 import "./tree.sass"
 import {query} from "../urls";

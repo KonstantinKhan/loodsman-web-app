@@ -2,8 +2,8 @@ import {IItem} from "../../types/IItem";
 import React, {useEffect, useState} from "react";
 import {Item} from "../item/Item";
 import {fetchItems} from "../fetch/fetchItems";
-import {query} from "../urls";
-import {queryIcons} from "../urls";
+import {query, queryIconsState} from "../urls";
+import {queryIconsType} from "../urls";
 
 interface IProps {
     level: number,
@@ -29,7 +29,8 @@ const ItemList: React.FC<IProps> = (props) => {
     const [items, setItems] = useState<IItem[]>([])
     const [loading, setLoading] = useState(true)
     const [toggleArr, setToggleArr] = useState<IToggle[]>([])
-    const [iconArr, setIconArr] = useState<IIcon[]>([])
+    const [iconTypeArr, setIconTypeArr] = useState<IIcon[]>([])
+    const [iconStateArr, setIconStateArr] = useState<IIcon[]>([])
 
     useEffect(() => {
         onRequest()
@@ -44,7 +45,8 @@ const ItemList: React.FC<IProps> = (props) => {
                 setItems(response)
                 for (const iItem of response) {
                     promises.push(setToggled(iItem))
-                    promises.push(setIcons(iItem))
+                    promises.push(setIconsType(iItem))
+                    promises.push(setIconsState(iItem))
                 }
                 Promise.all(promises)
                     .then(() => {
@@ -67,15 +69,26 @@ const ItemList: React.FC<IProps> = (props) => {
             })
     }
 
-    const setIcons = (item: IItem) => {
-        return fetch(`${queryIcons}${item.idType}/icon`, {
-            headers: []
-        })
+    const setIconsType = (item: IItem) => {
+        return fetch(`${queryIconsType}${item.idType}/icon`)
             .then(res => res.blob())
             .then(blob => {
                 const reader = new FileReader()
                 reader.readAsDataURL(blob)
-                reader.onloadend = () => setIconArr(prevState => [...prevState, {
+                reader.onloadend = () => setIconTypeArr(prevState => [...prevState, {
+                    id: item.id,
+                    icon: reader.result as string
+                }])
+            })
+    }
+
+    const setIconsState = (item: IItem) => {
+        return fetch(`${queryIconsState}${item.idState}/icon`)
+            .then(res => res.blob())
+            .then(blob => {
+                const reader = new FileReader()
+                reader.readAsDataURL(blob)
+                reader.onloadend = () => setIconStateArr(prevState => [...prevState, {
                     id: item.id,
                     icon: reader.result as string
                 }])
@@ -89,7 +102,8 @@ const ItemList: React.FC<IProps> = (props) => {
                 key={item.id}
                 level={level}
                 toggle={toggleArr.find((value) => value.id === item.id)?.toggle || false}
-                icon={iconArr.find(value => value.id === item.id)?.icon || ""}
+                iconType={iconTypeArr.find(value => value.id === item.id)?.icon || ""}
+                iconState={iconStateArr.find(value => value.id === item.id)?.icon || ""}
                 onItemSelected={onItemSelected}
                 activeId={activeId}
             />

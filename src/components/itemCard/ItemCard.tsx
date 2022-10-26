@@ -9,7 +9,15 @@ interface IProps {
 
 export const ItemCard = (props: IProps) => {
 
-    const {product, atributesObject} = props.item
+    const {product, atributesObject, id} = props.item
+
+    const sendData = (e: any) => {
+        console.log("sendData")
+        if (window)
+            window.opener.postMessage({
+                id: id
+            }, "*")
+    }
 
     return (
         <div
@@ -28,6 +36,10 @@ export const ItemCard = (props: IProps) => {
                         return <PropertyRow key={value[0]} first={value[0]} second={value[1]}/>
                     })
                 }
+                <button
+                    onClick={sendData}
+                >Send data
+                </button>
             </div>
         </div>
     )
