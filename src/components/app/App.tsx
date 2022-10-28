@@ -44,8 +44,6 @@ const App: React.FC = () => {
     return (
         <div>
             <Search/>
-            <Tree onItemSelected={onItemSelected} activeId={activeId} onShowCard={onShowCard}/>
-            <ItemCard item={activeItem}/>
             <Tree
                 onItemSelected={onItemSelected}
                 onShowCard={onShowCard}

@@ -2,14 +2,22 @@ import {IItem} from "../../types/IItem";
 
 import "./itemCard.sass"
 import {PropertyRow} from "../PropertyRow/PropertyRow";
+import {useEffect, useState} from "react";
 
 interface IProps {
     item: IItem
 }
 
+interface IData {
+    id: string,
+    firstValue: string,
+    secondValue: string
+}
+
 export const ItemCard = (props: IProps) => {
 
-    const {product, atributesObject, id} = props.item
+    const {product, atributesObject, atributesRelation, id} = props.item
+    const [data, setData] = useState<IData[]>([])
 
     const sendData = (e: any) => {
         console.log("sendData")
@@ -18,6 +26,22 @@ export const ItemCard = (props: IProps) => {
                 id: id
             }, "*")
     }
+
+    useEffect(() => {
+        setData([])
+        Object.entries(atributesObject)
+            .forEach(value => setData(prevState => [...prevState, {
+                id: "obj " + value[0],
+                firstValue: value[0],
+                secondValue: value[1]
+            }]))
+        Object.entries(atributesRelation)
+            .forEach(value => setData(prevState => [...prevState, {
+                id: "rel " + value[0],
+                firstValue: value[0],
+                secondValue: value[1]
+            }]))
+    }, [atributesObject, atributesRelation])
 
     return (
         <div
@@ -32,8 +56,11 @@ export const ItemCard = (props: IProps) => {
                 className={"itemCard__properties"}
             >
                 {
-                    Object.entries(atributesObject).map(value => {
-                        return <PropertyRow key={value[0]} first={value[0]} second={value[1]}/>
+                    data.map(value => {
+                        return <PropertyRow
+                            key={value.id}
+                            first={value.firstValue}
+                            second={value.secondValue}/>
                     })
                 }
             </div>
