@@ -3,6 +3,8 @@ import {Tree} from "../Tree/Tree";
 import {ItemCard} from "../itemCard/ItemCard";
 import {IItem} from "../../types/IItem";
 import {Search} from "../search/Search";
+import {IConfig} from "../../types/IConfig";
+import {configPath} from "../urls";
 
 const App: React.FC = () => {
 
@@ -28,6 +30,11 @@ const App: React.FC = () => {
 
     const [activeId, setActiveId] = useState(0)
     const [showCard, setShowCard] = useState(false)
+    const [config, setConfig] = useState<IConfig>({
+        attributes: [],
+        states: [],
+        types: []
+    })
 
     const onItemSelected = (item: IItem) => {
         setActiveItem(item)
@@ -37,9 +44,25 @@ const App: React.FC = () => {
         setShowCard(showCard)
     }
 
+    const fetchConfig = () => {
+        fetch(configPath)
+            .then(response => response.json())
+            .then(data => setConfig(data))
+            .catch(error => console.log(error))
+    }
+
+    const isSystemAttr = (name: string): boolean => {
+        const attr = config.attributes.find(it => it.name === name)
+        return !!attr;
+    }
+
     useEffect(() => {
         setActiveId(activeItem.id)
     }, [activeItem])
+
+    useEffect(() => {
+        fetchConfig()
+    }, [])
 
     return (
         <div>
@@ -48,8 +71,9 @@ const App: React.FC = () => {
                 onItemSelected={onItemSelected}
                 onShowCard={onShowCard}
                 activeId={activeId}
+
             />
-            {showCard ? <ItemCard item={activeItem}/> : null}
+            {showCard ? <ItemCard item={activeItem} isSystemAttr={isSystemAttr}/> : null}
         </div>
     )
 }

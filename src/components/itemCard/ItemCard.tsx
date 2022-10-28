@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 
 interface IProps {
     item: IItem
+    isSystemAttr: (name: string) => boolean
 }
 
 interface IData {
@@ -16,7 +17,8 @@ interface IData {
 
 export const ItemCard = (props: IProps) => {
 
-    const {product, atributesObject, atributesRelation, id} = props.item
+    const {product, atributesObject, atributesRelation, id, maxQuantity, minQuantity} = props.item
+    const {isSystemAttr} = props
     const [data, setData] = useState<IData[]>([])
 
     const sendData = (e: any) => {
@@ -27,20 +29,57 @@ export const ItemCard = (props: IProps) => {
             }, "*")
     }
 
+    const quantity = () => {
+        if (minQuantity !== null || maxQuantity !== null) {
+            if (minQuantity === maxQuantity) {
+                return maxQuantity.toString()
+            } else {
+                return `${minQuantity}..${maxQuantity}`
+            }
+        }
+    }
+
     useEffect(() => {
         setData([])
+
+        setData(prevState => [...prevState, {
+            id: "_id",
+            firstValue: "id",
+            secondValue: id.toString()
+        }])
+
+
+        if (minQuantity !== null || maxQuantity !== null) {
+            setData(prevState => [...prevState, {
+                id: "quantity",
+                firstValue: "Количество",
+                secondValue: quantity()
+            }])
+        }
+
         Object.entries(atributesObject)
             .forEach(value => setData(prevState => [...prevState, {
                 id: "obj " + value[0],
                 firstValue: value[0],
                 secondValue: value[1]
             }]))
+        // Object.entries(atributesRelation)
+        //     .forEach(value => setData(prevState => [...prevState, {
+        //         id: "rel " + value[0],
+        //         firstValue: value[0],
+        //         secondValue: value[1]
+        //     }]))
         Object.entries(atributesRelation)
-            .forEach(value => setData(prevState => [...prevState, {
-                id: "rel " + value[0],
-                firstValue: value[0],
-                secondValue: value[1]
-            }]))
+            .forEach(value => {
+                    if (!isSystemAttr(value[0])) {
+                        setData(prevState => [...prevState, {
+                            id: "rel " + value[0],
+                            firstValue: value[0],
+                            secondValue: value[1]
+                        }])
+                    }
+                }
+            )
     }, [atributesObject, atributesRelation])
 
     return (
