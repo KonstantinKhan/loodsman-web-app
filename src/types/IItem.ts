@@ -16,6 +16,7 @@ export interface IItem {
     inverseName: any
     minQuantity: any
     maxQuantity: any
+    childCount: number
 }
 
 interface AttributesObject {}
