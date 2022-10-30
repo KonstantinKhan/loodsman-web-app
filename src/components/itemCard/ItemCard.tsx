@@ -1,7 +1,7 @@
 import {IItem} from "../../types/IItem";
 
 import "./itemCard.sass"
-import {PropertyRow} from "../PropertyRow/PropertyRow";
+import {PropertyRow} from "../propertyRow/PropertyRow";
 import {useEffect, useState} from "react";
 
 interface IProps {
@@ -63,23 +63,20 @@ export const ItemCard = (props: IProps) => {
                 firstValue: value[0],
                 secondValue: value[1]
             }]))
-        // Object.entries(atributesRelation)
-        //     .forEach(value => setData(prevState => [...prevState, {
-        //         id: "rel " + value[0],
-        //         firstValue: value[0],
-        //         secondValue: value[1]
-        //     }]))
-        Object.entries(atributesRelation)
-            .forEach(value => {
-                    if (!isSystemAttr(value[0])) {
-                        setData(prevState => [...prevState, {
-                            id: "rel " + value[0],
-                            firstValue: value[0],
-                            secondValue: value[1]
-                        }])
+        if (atributesRelation) {
+            Object.entries(atributesRelation)
+                .forEach(value => {
+                        if (!isSystemAttr(value[0])) {
+                            setData(prevState => [...prevState, {
+                                id: "rel " + value[0],
+                                firstValue: value[0],
+                                secondValue: value[1]
+                            }])
+                        }
                     }
-                }
-            )
+                )
+        }
+
     }, [atributesObject, atributesRelation])
 
     return (

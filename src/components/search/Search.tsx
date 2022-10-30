@@ -1,38 +1,80 @@
 import "./search.sass"
 import React from "react";
-import {search} from "../urls";
-import {ISearch} from "../../types/ISearch";
 
-export const Search: React.FC = () => {
+import {DropDown, IDropItem} from "../dropDown/DropDown";
+import {IItem} from "../../types/IItem";
+
+interface IProps {
+    states: IDropItem[]
+    types: IDropItem[]
+    onFetch: (items: IItem[]) => void
+    onChangeRequest: (queryRequest: string) => void
+    onChangeTypesProps: (types: string[]) => void
+    onChangeStatesProps: (states: string[]) => void
+    typesRequest: string[]
+    statesRequest: string[]
+}
+
+export const Search: React.FC<IProps> = (props: IProps) => {
+
+    const {onChangeRequest, onChangeTypesProps, onChangeStatesProps, typesRequest, statesRequest} = props
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChangeRequest(e.currentTarget.value)
+    }
 
-        const data: ISearch = {
-            attrCondition: [],
-            product: "АГ52.289.047",
-            states: [],
-            types: [],
-            version: ""
-        }
+    const onChangeTypes = (items: string[]) => {
+        onChangeTypesProps(items)
+    }
 
-        fetch(`${search}`, {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error))
+    const onChangeStates = (items: string[]) => {
+        onChangeStatesProps(items)
+    }
+
+    const onChangeVersion = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // setVersion(e.currentTarget.value)
     }
 
     return (
-        <>
-            <input
-                onChange={onChange}
-            />
-        </>
+        <div
+            className={"searchContainer"}
+        >
+            <div
+                className="searchContainer__block"
+            >
+                <input
+                    className={"input"}
+                    onChange={onChange}
+                />
+            </div>
+            <div
+                className="searchContainer__block"
+            >
+                <DropDown
+                    getItems={onChangeStates}
+                    items={props.states}
+                    typesRequest={typesRequest}
+                    statesRequest={statesRequest}
+                />
+            </div>
+            <div
+                className="searchContainer__block"
+            >
+                <DropDown
+                    getItems={onChangeTypes}
+                    items={props.types}
+                    typesRequest={typesRequest}
+                    statesRequest={statesRequest}
+                />
+            </div>
+            <div
+                className="searchContainer__block"
+            >
+                <input
+                    className={"input"}
+                    onChange={onChangeVersion}
+                />
+            </div>
+        </div>
     )
 }

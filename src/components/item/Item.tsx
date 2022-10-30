@@ -18,11 +18,14 @@ interface IProps {
     onItemSelected: (item: IItem) => void
     onShowCard: (showCard: boolean) => void
     activeId: number
+    queryRequest: string
+    typesRequest: string[]
+    statesRequest: string[]
 }
 
 const Item: React.FC<IProps> = (props) => {
 
-    const {activeId} = props
+    const {activeId, queryRequest, typesRequest, statesRequest} = props
     const {product, id} = props.item
     const {level, toggle, iconType, iconState, onItemSelected, onShowCard} = props
     const [toggled, setToggled] = useState(false)
@@ -47,12 +50,16 @@ const Item: React.FC<IProps> = (props) => {
             onItemSelected={onItemSelected}
             onShowCard={onShowCard}
             activeId={activeId}
+            queryRequest={queryRequest}
+            typesRequest={typesRequest}
+            statesRequest={statesRequest}
         />
     }
 
     const content = toggled ? renderItems() : null
 
     const showInfo = () => {
+        console.log("showInfo", props.item)
         onItemSelected(props.item)
         if (Object.entries(props.item.atributesObject).length > 0) {
             onShowCard(true)

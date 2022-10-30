@@ -4,7 +4,12 @@ import {ItemCard} from "../itemCard/ItemCard";
 import {IItem} from "../../types/IItem";
 import {Search} from "../search/Search";
 import {IConfig} from "../../types/IConfig";
-import {configPath} from "../urls";
+import {configPath, query} from "../urls";
+
+interface IToggle {
+    id: number,
+    toggle: boolean,
+}
 
 const App: React.FC = () => {
 
@@ -25,7 +30,8 @@ const App: React.FC = () => {
         relationName: undefined,
         state: "",
         type: "",
-        version: undefined
+        version: undefined,
+        childCount: 0
     })
 
     const [activeId, setActiveId] = useState(0)
@@ -35,6 +41,12 @@ const App: React.FC = () => {
         states: [],
         types: []
     })
+    const [fetchItems, setFetchItems] = useState<IItem[]>([])
+    const [toggleArr, setToggleArr] = useState<IToggle[]>([])
+    const [url, setUrl] = useState("")
+    const [queryRequest, setQueryRequest] = useState("")
+    const [statesRequest, setStatesRequest] = useState<string[]>([])
+    const [typesRequest, setTypesRequest] = useState<string[]>([])
 
     const onItemSelected = (item: IItem) => {
         setActiveItem(item)
@@ -56,22 +68,76 @@ const App: React.FC = () => {
         return !!attr;
     }
 
+    const setToggled = (item: IItem) => {
+        return fetch(`${query}${item.id}`)
+            .then(res => res.json())
+            .then(data => {
+                const dataItems = data as IItem[]
+                if (dataItems.length > 0) {
+                    setToggleArr(prevState => [...prevState, {id: item.id, toggle: true}])
+                } else {
+                    setToggleArr((prevState => [...prevState, {id: item.id, toggle: false}]))
+                }
+            })
+    }
+
+    const onChangeRequest = (queryRequest: string) => {
+        setQueryRequest(queryRequest)
+    }
+
+    const onChangeTypes = (types: string[]) => {
+        setTypesRequest(types)
+    }
+
+    const onChangeStates = (states: string[]) => {
+        setStatesRequest(states)
+    }
+
     useEffect(() => {
         setActiveId(activeItem.id)
     }, [activeItem])
 
     useEffect(() => {
+        setUrl(query)
         fetchConfig()
     }, [])
 
+    const onFetch = (items: IItem[]) => {
+        items.forEach(item => {
+            setToggled(item)
+        })
+        setFetchItems(items)
+    }
+
     return (
         <div>
-            <Search/>
+            <Search
+                states={config.states.sort((a, b) => {
+                    if (a.name < b.name) return -1
+                    if (a.name > b.name) return 1
+                    return 0
+                })}
+                types={config.types.sort((a, b) => {
+                    if (a.name < b.name) return -1
+                    if (a.name > b.name) return 1
+                    return 0
+                })}
+                onFetch={onFetch}
+                onChangeRequest={onChangeRequest}
+                onChangeTypesProps={onChangeTypes}
+                onChangeStatesProps={onChangeStates}
+                typesRequest={typesRequest}
+                statesRequest={statesRequest}
+            />
+
             <Tree
                 onItemSelected={onItemSelected}
                 onShowCard={onShowCard}
                 activeId={activeId}
-
+                url={url}
+                queryRequest={queryRequest}
+                typesRequest={typesRequest}
+                statesRequest={statesRequest}
             />
             {showCard ? <ItemCard item={activeItem} isSystemAttr={isSystemAttr}/> : null}
         </div>
