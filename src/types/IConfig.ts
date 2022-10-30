@@ -14,12 +14,12 @@ export interface Attribute {
     onlyListItems: boolean
 }
 
-interface State {
+export interface State {
     id: number
     name: string
 }
 
-interface Type {
+export interface Type {
     id: number
     name: string
     isAbstract: boolean

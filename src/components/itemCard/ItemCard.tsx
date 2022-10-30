@@ -57,12 +57,21 @@ export const ItemCard = (props: IProps) => {
             }])
         }
 
-        Object.entries(atributesObject)
-            .forEach(value => setData(prevState => [...prevState, {
-                id: "obj " + value[0],
-                firstValue: value[0],
-                secondValue: value[1]
-            }]))
+        if (atributesObject) {
+            Object.entries(atributesObject)
+                .forEach(value => {
+                    console.log(value)
+                        if (!isSystemAttr(value[0])) {
+                            setData(prevState => [...prevState, {
+                                id: "obj " + value[0],
+                                firstValue: value[0],
+                                secondValue: value[1]
+                            }])
+                        }
+                    }
+                )
+        }
+
         if (atributesRelation) {
             Object.entries(atributesRelation)
                 .forEach(value => {

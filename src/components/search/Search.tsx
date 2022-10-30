@@ -51,6 +51,7 @@ export const Search: React.FC<IProps> = (props: IProps) => {
                 className="searchContainer__block"
             >
                 <DropDown
+                    type={"states"}
                     getItems={onChangeStates}
                     items={props.states}
                     typesRequest={typesRequest}
@@ -61,6 +62,7 @@ export const Search: React.FC<IProps> = (props: IProps) => {
                 className="searchContainer__block"
             >
                 <DropDown
+                    type={"types"}
                     getItems={onChangeTypes}
                     items={props.types}
                     typesRequest={typesRequest}

@@ -6,6 +6,7 @@ interface IProps {
     getItems: (items: string[]) => void
     statesRequest: string[]
     typesRequest: string[]
+    type: string
 }
 
 interface IFocus {
@@ -20,7 +21,7 @@ export interface IDropItem {
 
 export const DropDown: React.FC<IProps> = (props: IProps) => {
 
-    const {items, getItems, typesRequest, statesRequest} = props
+    const {items, getItems, typesRequest, statesRequest, type} = props
     const [show, setShow] = useState(false)
     const [itemsArr, setItemsArr] = useState<IDropItem[]>([])
     const [value, setValue] = useState<string[]>([])
@@ -55,7 +56,14 @@ export const DropDown: React.FC<IProps> = (props: IProps) => {
     }
 
     const isChecked = (value: string) => {
-        return typesRequest.includes(value) || statesRequest.includes(value);
+        switch (type) {
+            case "types":
+                return typesRequest.includes(value)
+            case "states":
+                return statesRequest.includes(value)
+            default:
+                return false
+        }
     }
 
 

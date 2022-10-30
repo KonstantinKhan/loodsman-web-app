@@ -3,7 +3,7 @@ import {Tree} from "../Tree/Tree";
 import {ItemCard} from "../itemCard/ItemCard";
 import {IItem} from "../../types/IItem";
 import {Search} from "../search/Search";
-import {IConfig} from "../../types/IConfig";
+import {IConfig, State, Type} from "../../types/IConfig";
 import {configPath, query} from "../urls";
 
 interface IToggle {
@@ -65,7 +65,9 @@ const App: React.FC = () => {
 
     const isSystemAttr = (name: string): boolean => {
         const attr = config.attributes.find(it => it.name === name)
-        return !!attr;
+        if (attr) {
+            return attr.system
+        } else return false
     }
 
     const setToggled = (item: IItem) => {
@@ -109,19 +111,30 @@ const App: React.FC = () => {
         setFetchItems(items)
     }
 
+    const sort = (items: State[] | Type[], arr: string[]) => {
+
+        const checkedItems = items.filter(value => arr.includes(value.name))
+            .sort((a, b) => {
+                if (a.name < b.name) return -1
+                if (a.name > b.name) return 1
+                return 0
+            })
+        const unCheckedItems = items.filter(state => !arr.includes(state.name))
+            .sort((a, b) => {
+                if (a.name < b.name) return -1
+                if (a.name > b.name) return 1
+                return 0
+            })
+        return checkedItems.concat(unCheckedItems).map(item =>
+            ({id: item.id, name: item.name})
+        )
+    }
+
     return (
         <div>
             <Search
-                states={config.states.sort((a, b) => {
-                    if (a.name < b.name) return -1
-                    if (a.name > b.name) return 1
-                    return 0
-                })}
-                types={config.types.sort((a, b) => {
-                    if (a.name < b.name) return -1
-                    if (a.name > b.name) return 1
-                    return 0
-                })}
+                states={sort(config.states, statesRequest)}
+                types={sort(config.types, typesRequest)}
                 onFetch={onFetch}
                 onChangeRequest={onChangeRequest}
                 onChangeTypesProps={onChangeTypes}
