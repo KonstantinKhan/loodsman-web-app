@@ -1,51 +1,105 @@
 import "./search.sass"
-import React from "react";
+import React, {useState} from "react";
 
 import {DropDown, IDropItem} from "../dropDown/DropDown";
-import {IItem} from "../../types/IItem";
 
 interface IProps {
     states: IDropItem[]
     types: IDropItem[]
-    onFetch: (items: IItem[]) => void
     onChangeRequest: (queryRequest: string) => void
-    onChangeTypesProps: (types: string[]) => void
-    onChangeStatesProps: (states: string[]) => void
+    onChangeTypesProps: (types: string[], currentQueryItem: string) => void
+    onChangeStatesProps: (states: string[], currentQueryItem: string) => void
+    onChangeVersionProps: (version: string) => void
     typesRequest: string[]
     statesRequest: string[]
 }
 
 export const Search: React.FC<IProps> = (props: IProps) => {
 
-    const {onChangeRequest, onChangeTypesProps, onChangeStatesProps, typesRequest, statesRequest} = props
+    const {
+        onChangeRequest,
+        onChangeTypesProps,
+        onChangeStatesProps,
+        onChangeVersionProps,
+        typesRequest,
+        statesRequest
+    } = props
+
+    const [clearQuery, setClearQuery] = useState(false)
+    const [clearVersion, setClearVersion] = useState(false)
+    const [version, setVersion] = useState("")
+    const [query, setQuery] = useState("")
+    const [clear, setClear] = useState(false)
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChangeRequest(e.currentTarget.value)
+        const q = e.currentTarget.value.trim()
+        onChangeRequest(q)
+        setClearQuery(q.length > 0)
+        setQuery(q)
     }
 
-    const onChangeTypes = (items: string[]) => {
-        onChangeTypesProps(items)
+    const onChangeTypes = (items: string[], currentQueryItem: string) => {
+        onChangeTypesProps(items, currentQueryItem)
     }
 
-    const onChangeStates = (items: string[]) => {
-        onChangeStatesProps(items)
+    const onChangeStates = (items: string[], currentQueryItem: string) => {
+        onChangeStatesProps(items, currentQueryItem)
     }
 
     const onChangeVersion = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // setVersion(e.currentTarget.value)
+        const ver = e.currentTarget.value.trim()
+        onChangeVersionProps(ver)
+        setClearVersion(ver.length > 0)
+        setVersion(ver)
     }
 
     return (
         <div
             className={"searchContainer"}
         >
+            <div className={"clearAll"}
+                 onClick={() => {
+                     onChangeRequest("")
+                     setQuery("")
+                     setClearQuery(false)
+                     onChangeVersionProps("")
+                     setVersion("")
+                     setClearVersion(false)
+                     onChangeStatesProps([], "")
+                     onChangeTypesProps([], "")
+                     setClear(true)
+                 }}
+            >
+                <span
+                    className={"clearAll__action"}
+                >Очистить фильтры</span>
+            </div>
+
             <div
                 className="searchContainer__block"
             >
-                <input
-                    className={"input"}
-                    onChange={onChange}
-                />
+                <div className={"dropDown__search"}>
+                    <input
+                        className={"input"}
+                        onChange={onChange}
+                        placeholder={"Поиск..."}
+                        value={query}
+                    />
+                    {
+                        clearQuery ?
+                            <div className={"clearFilter"}
+                                 onClick={() => {
+                                     onChangeRequest("")
+                                     setQuery("")
+                                     setClearQuery(false)
+                                 }}
+                            >
+                                <span className={"clearFilter__action"}>x</span>
+                            </div> : null
+                    }
+
+                </div>
+
             </div>
             <div
                 className="searchContainer__block"
@@ -56,6 +110,9 @@ export const Search: React.FC<IProps> = (props: IProps) => {
                     items={props.states}
                     typesRequest={typesRequest}
                     statesRequest={statesRequest}
+                    placeholder={"Состояние..."}
+                    clearProps={clear}
+                    setClear={setClear}
                 />
             </div>
             <div
@@ -67,15 +124,32 @@ export const Search: React.FC<IProps> = (props: IProps) => {
                     items={props.types}
                     typesRequest={typesRequest}
                     statesRequest={statesRequest}
+                    placeholder={"Тип..."}
+                    clearProps={clear}
+                    setClear={setClear}
                 />
             </div>
-            <div
-                className="searchContainer__block"
-            >
-                <input
-                    className={"input"}
-                    onChange={onChangeVersion}
-                />
+            <div className="searchContainer__block">
+                <div className={"dropDown__search"}>
+                    <input
+                        className={"input"}
+                        onChange={onChangeVersion}
+                        placeholder={"Версия..."}
+                        value={version}
+                    />
+                    {
+                        clearVersion ?
+                            <div className={"clearFilter"}
+                                 onClick={() => {
+                                     onChangeVersionProps("")
+                                     setVersion("")
+                                     setClearVersion(false)
+                                 }}
+                            >
+                                <span className={"clearFilter__action"}>x</span>
+                            </div> : null
+                    }
+                </div>
             </div>
         </div>
     )

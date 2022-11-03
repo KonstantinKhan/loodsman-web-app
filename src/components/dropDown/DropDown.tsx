@@ -1,12 +1,15 @@
 import "./dropDown.sass"
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 interface IProps {
     items: IDropItem[]
-    getItems: (items: string[]) => void
+    getItems: (items: string[], currentQueryItem: string) => void
     statesRequest: string[]
     typesRequest: string[]
     type: string
+    placeholder: string
+    clearProps: boolean
+    setClear: (clear: boolean) => void
 }
 
 interface IFocus {
@@ -21,19 +24,30 @@ export interface IDropItem {
 
 export const DropDown: React.FC<IProps> = (props: IProps) => {
 
-    const {items, getItems, typesRequest, statesRequest, type} = props
+    const sea = useRef<HTMLInputElement>(null)
+
+    const {items, getItems, typesRequest, statesRequest, type, placeholder, clearProps, setClear} = props
+
     const [show, setShow] = useState(false)
     const [itemsArr, setItemsArr] = useState<IDropItem[]>([])
     const [value, setValue] = useState<string[]>([])
     const [focus, setFocus] = useState<IFocus>({inputFocus: false, suggestedFocus: false})
+    const [queryValue, setQueryValue] = useState("")
 
     useEffect(() => {
         setItemsArr(items)
     }, [items])
 
     useEffect(() => {
-        getItems(value)
-    }, [value])
+        getItems(value, queryValue)
+    }, [value, queryValue])
+
+    useEffect(() => {
+        if (clearProps) {
+            setQueryValue("")
+            setValue([])
+        }
+    }, [clearProps])
 
     useEffect(() => {
         if (!focus.inputFocus && !focus.suggestedFocus) {
@@ -42,7 +56,9 @@ export const DropDown: React.FC<IProps> = (props: IProps) => {
     }, [focus])
 
     const onFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setItemsArr(items.filter(value => value.name.toLowerCase().includes(e.currentTarget.value.toLowerCase())))
+        const q = e.currentTarget.value
+        setItemsArr(items.filter(value => value.name.toLowerCase().includes(q.toLowerCase())))
+        setQueryValue(q)
     }
 
     const onChecked = (val: string, checked: boolean) => {
@@ -53,6 +69,7 @@ export const DropDown: React.FC<IProps> = (props: IProps) => {
                 return prevState.filter(item => item !== val)
             }
         })
+        sea.current!!.focus()
     }
 
     const isChecked = (value: string) => {
@@ -66,25 +83,58 @@ export const DropDown: React.FC<IProps> = (props: IProps) => {
         }
     }
 
-
     return (
         <div
             className={"dropDown__container"}
         >
-
-            <input
-                className={"input"}
-                onChange={onFilter}
-                onFocus={() => setFocus(prevState => ({
-                    ...prevState,
-                    inputFocus: true
-                }))}
-                onBlur={() => setFocus(prevState => ({
-                    ...prevState,
-                    inputFocus: false
-                }))}
-            />
-
+            <div
+                className={"dropDown__search"}
+            >
+                <input
+                    ref={sea}
+                    className={"input"}
+                    onChange={onFilter}
+                    onFocus={() => {
+                        setClear(false)
+                        setFocus(prevState => ({
+                            ...prevState,
+                            inputFocus: true
+                        }))
+                    }}
+                    onBlur={() => setFocus(prevState => ({
+                        ...prevState,
+                        inputFocus: false
+                    }))}
+                    placeholder={placeholder}
+                    value={queryValue}
+                />
+                {
+                    queryValue.length > 0 ?
+                        <div className={"clearFilter"}
+                             style={{
+                                 right: "2rem"
+                             }}
+                             onClick={() => {
+                                 setQueryValue("")
+                                 sea.current!!.focus()
+                             }}
+                        >
+                            <span className={"clearFilter__action"}
+                                  style={{marginTop: "0.7rem", marginLeft: "-0.05rem"}}>{"<"}</span>
+                        </div> : null
+                }
+                {
+                    (statesRequest.length > 0 || typesRequest.length > 0) && value.length > 0 ?
+                        <div className={"clearFilter"}
+                             onClick={() => {
+                                 setValue([])
+                                 setQueryValue("")
+                             }}
+                        >
+                            <span className={"clearFilter__action"}>x</span>
+                        </div> : null
+                }
+            </div>
             {
                 show ? <div
                     className="dropDown__suggest"

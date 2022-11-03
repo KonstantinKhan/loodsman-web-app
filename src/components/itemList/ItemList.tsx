@@ -16,6 +16,7 @@ interface IProps {
     queryRequest: string
     typesRequest: string[]
     statesRequest: string[]
+    versionRequest: string
 }
 
 interface IToggle {
@@ -37,7 +38,8 @@ const ItemList: React.FC<IProps> = (props) => {
         activeId,
         queryRequest,
         typesRequest,
-        statesRequest
+        statesRequest,
+        versionRequest
     } = props
 
     const [items, setItems] = useState<IItem[]>([])
@@ -45,23 +47,22 @@ const ItemList: React.FC<IProps> = (props) => {
     const [toggleArr, setToggleArr] = useState<IToggle[]>([])
     const [iconTypeArr, setIconTypeArr] = useState<IIcon[]>([])
     const [iconStateArr, setIconStateArr] = useState<IIcon[]>([])
-    const [version, setVersion] = useState("")
 
     useEffect(() => {
         onRequest()
-    }, [queryRequest, typesRequest, statesRequest])
+    }, [queryRequest, typesRequest, statesRequest, versionRequest])
 
     const fetchData = (promises: Promise<void>[]) => {
-
-        if (queryRequest.trim().length > 1) {
+        if (queryRequest.trim().length > 1 || versionRequest.trim().length > 0 || typesRequest.length > 0 || statesRequest.length > 0) {
             const data: ISearch = {
                 attrCondition: [],
                 product: `%${queryRequest}%`,
                 states: statesRequest,
                 types: typesRequest,
-                version: version
+                version: `${versionRequest}%`
             }
-            if (data.product.length > 3) {
+
+            if (data.product.length > 3 || data.version.trim().length > 0) {
                 fetch(`${search}`, {
                     method: "POST",
                     headers: {
@@ -98,38 +99,41 @@ const ItemList: React.FC<IProps> = (props) => {
     }
 
     const onRequest = () => {
-
         setLoading(true)
 
         const promises = [] as Promise<void>[]
 
-        if (queryRequest.trim().length > 0 || statesRequest.length > 0 || typesRequest.length > 0) {
+        if (queryRequest.trim().length > 1 || statesRequest.length > 0 || typesRequest.length > 0 || versionRequest.length > 0) {
             fetchData(promises)
         } else {
-            fetchItems<IItem[]>(url)
-                .then(response => {
-                    setItems(response)
-                    for (const iItem of response) {
-                        setToggled(iItem)
-                        promises.push(fetchTypeIcon(iItem.idType).then(data => {
-                            setIconTypeArr(prevState => [...prevState, {
-                                id: iItem.id,
-                                icon: data
-                            }])
-                        }))
-                        promises.push(fetchStateIcon(iItem.idState).then(data => {
-                            setIconStateArr(prevState => [...prevState, {
-                                id: iItem.id,
-                                icon: data
-                            }])
-                        }))
-                    }
-                    Promise.all(promises)
-                        .then(() => {
-                            setLoading(false)
-                        })
-                })
-                .catch(error => console.log(error))
+            if (queryRequest.trim().length !== 1) {
+                fetchItems<IItem[]>(url)
+                    .then(response => {
+                        setItems(response)
+                        for (const iItem of response) {
+                            setToggled(iItem)
+                            promises.push(fetchTypeIcon(iItem.idType).then(data => {
+                                setIconTypeArr(prevState => [...prevState, {
+                                    id: iItem.id,
+                                    icon: data
+                                }])
+                            }))
+                            promises.push(fetchStateIcon(iItem.idState).then(data => {
+                                setIconStateArr(prevState => [...prevState, {
+                                    id: iItem.id,
+                                    icon: data
+                                }])
+                            }))
+                        }
+                        Promise.all(promises)
+                            .then(() => {
+                                setLoading(false)
+                            })
+                    })
+                    .catch(error => console.log(error))
+            } else {
+                setLoading(false)
+            }
         }
     }
 
@@ -156,6 +160,7 @@ const ItemList: React.FC<IProps> = (props) => {
                 queryRequest={queryRequest}
                 typesRequest={typesRequest}
                 statesRequest={statesRequest}
+                versionRequest={versionRequest}
             />
         })
         return (

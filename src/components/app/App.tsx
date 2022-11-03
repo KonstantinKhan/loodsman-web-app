@@ -6,11 +6,6 @@ import {Search} from "../search/Search";
 import {IConfig, State, Type} from "../../types/IConfig";
 import {configPath, query} from "../urls";
 
-interface IToggle {
-    id: number,
-    toggle: boolean,
-}
-
 const App: React.FC = () => {
 
     const [activeItem, setActiveItem] = useState<IItem>({
@@ -41,12 +36,12 @@ const App: React.FC = () => {
         states: [],
         types: []
     })
-    const [fetchItems, setFetchItems] = useState<IItem[]>([])
-    const [toggleArr, setToggleArr] = useState<IToggle[]>([])
     const [url, setUrl] = useState("")
     const [queryRequest, setQueryRequest] = useState("")
     const [statesRequest, setStatesRequest] = useState<string[]>([])
     const [typesRequest, setTypesRequest] = useState<string[]>([])
+    const [versionRequest, setVersionRequest] = useState("")
+    const [currentQueryItem, setCurrentQueryItem] = useState("")
 
     const onItemSelected = (item: IItem) => {
         setActiveItem(item)
@@ -70,29 +65,26 @@ const App: React.FC = () => {
         } else return false
     }
 
-    const setToggled = (item: IItem) => {
-        return fetch(`${query}${item.id}`)
-            .then(res => res.json())
-            .then(data => {
-                const dataItems = data as IItem[]
-                if (dataItems.length > 0) {
-                    setToggleArr(prevState => [...prevState, {id: item.id, toggle: true}])
-                } else {
-                    setToggleArr((prevState => [...prevState, {id: item.id, toggle: false}]))
-                }
-            })
-    }
-
     const onChangeRequest = (queryRequest: string) => {
         setQueryRequest(queryRequest)
     }
 
-    const onChangeTypes = (types: string[]) => {
+    const onChangeTypes = (types: string[], currentQueryItem: string) => {
         setTypesRequest(types)
+        setCurrentQueryItem(currentQueryItem)
     }
 
-    const onChangeStates = (states: string[]) => {
+    const onChangeStates = (states: string[], currentQueryItem: string) => {
         setStatesRequest(states)
+        setCurrentQueryItem(currentQueryItem)
+    }
+
+    const onChangeVersion = (version: string) => {
+        setVersionRequest(version)
+    }
+
+    const onCloseCard = () => {
+        setShowCard(false)
     }
 
     useEffect(() => {
@@ -104,15 +96,7 @@ const App: React.FC = () => {
         fetchConfig()
     }, [])
 
-    const onFetch = (items: IItem[]) => {
-        items.forEach(item => {
-            setToggled(item)
-        })
-        setFetchItems(items)
-    }
-
     const sort = (items: State[] | Type[], arr: string[]) => {
-
         const checkedItems = items.filter(value => arr.includes(value.name))
             .sort((a, b) => {
                 if (a.name < b.name) return -1
@@ -125,9 +109,9 @@ const App: React.FC = () => {
                 if (a.name > b.name) return 1
                 return 0
             })
-        return checkedItems.concat(unCheckedItems).map(item =>
+        return (checkedItems.concat(unCheckedItems).map(item =>
             ({id: item.id, name: item.name})
-        )
+        )).filter(it => it.name.toLowerCase().includes(currentQueryItem.toLowerCase()))
     }
 
     return (
@@ -135,10 +119,10 @@ const App: React.FC = () => {
             <Search
                 states={sort(config.states, statesRequest)}
                 types={sort(config.types, typesRequest)}
-                onFetch={onFetch}
                 onChangeRequest={onChangeRequest}
                 onChangeTypesProps={onChangeTypes}
                 onChangeStatesProps={onChangeStates}
+                onChangeVersionProps={onChangeVersion}
                 typesRequest={typesRequest}
                 statesRequest={statesRequest}
             />
@@ -151,8 +135,9 @@ const App: React.FC = () => {
                 queryRequest={queryRequest}
                 typesRequest={typesRequest}
                 statesRequest={statesRequest}
+                versionRequest={versionRequest}
             />
-            {showCard ? <ItemCard item={activeItem} isSystemAttr={isSystemAttr}/> : null}
+            {showCard ? <ItemCard item={activeItem} isSystemAttr={isSystemAttr} onClose={onCloseCard}/> : null}
         </div>
     )
 }

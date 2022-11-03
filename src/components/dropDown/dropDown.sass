@@ -25,3 +25,38 @@
 
     &__value
       display: inline
+
+.clearFilter
+  position: absolute
+  height: 1.5rem
+  width: 1.5rem
+  top: 0.25rem
+  right: 0.25rem
+  border: 1px solid #EF9A9A
+  cursor: pointer
+  border-radius: 50%
+  vertical-align: middle
+  text-align: center
+  background-color: #FFCDD2
+  transition: 0.5s
+
+  &:hover
+    background-color: #EF9A9A
+    border-color: #EF5350
+    box-shadow: 0 0 6px #EF5350
+
+  &__action
+    position: absolute
+    font-size: 1.2rem
+    font-weight: bold
+    color: #EF9A9A
+    margin-top: 0.6rem
+    transform: translate(-50%, -50%)
+    transition: 0.5s
+
+  &:hover > &__action
+    color: #fff
+
+.dropDown
+  &__search
+    position: relative

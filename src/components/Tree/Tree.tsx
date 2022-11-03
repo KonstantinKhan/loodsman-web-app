@@ -13,11 +13,12 @@ interface IProps {
     queryRequest: string
     typesRequest: string[]
     statesRequest: string[]
+    versionRequest: string
 }
 
 const Tree: React.FC<IProps> = (props: IProps) => {
 
-    const {onItemSelected, onShowCard, activeId, queryRequest, typesRequest, statesRequest} = props
+    const {onItemSelected, onShowCard, activeId, queryRequest, typesRequest, statesRequest, versionRequest} = props
 
     return (
         <div
@@ -32,6 +33,7 @@ const Tree: React.FC<IProps> = (props: IProps) => {
                 queryRequest={queryRequest}
                 typesRequest={typesRequest}
                 statesRequest={statesRequest}
+                versionRequest={versionRequest}
             />
         </div>
     )

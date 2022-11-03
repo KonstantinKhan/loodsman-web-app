@@ -21,12 +21,13 @@ interface IProps {
     queryRequest: string
     typesRequest: string[]
     statesRequest: string[]
+    versionRequest: string
 }
 
 const Item: React.FC<IProps> = (props) => {
 
-    const {activeId, queryRequest, typesRequest, statesRequest} = props
-    const {product, id} = props.item
+    const {activeId, queryRequest, typesRequest, statesRequest, versionRequest} = props
+    const {product, id, type, state} = props.item
     const {level, toggle, iconType, iconState, onItemSelected, onShowCard} = props
     const [toggled, setToggled] = useState(false)
     const [active, setActive] = useState(false)
@@ -53,13 +54,13 @@ const Item: React.FC<IProps> = (props) => {
             queryRequest={queryRequest}
             typesRequest={typesRequest}
             statesRequest={statesRequest}
+            versionRequest={versionRequest}
         />
     }
 
     const content = toggled ? renderItems() : null
 
     const showInfo = () => {
-        console.log("showInfo", props.item)
         onItemSelected(props.item)
         if (Object.entries(props.item.atributesObject).length > 0) {
             onShowCard(true)
@@ -100,12 +101,17 @@ const Item: React.FC<IProps> = (props) => {
                                         /> : null}
                                 </div> : null
                         }
-                        <img
-                            className={"item__icon-type"}
-                            src={iconType} alt="iconType"/>
-                        <img
-                            className={"item__icon-state"}
-                            src={iconState} alt="iconState"/>
+                        <div className={"item__icon-type__box"} data-title={type}>
+                            <img
+                                className={"item__icon-type"}
+                                src={iconType} alt="iconType"
+                            />
+                        </div>
+                        <div className={"item__icon-state__box"} data-title={state}>
+                            <img
+                                className={"item__icon-state"}
+                                src={iconState} alt="iconState"/>
+                        </div>
                         <span
                             className={"item__title"}
                             onClick={showInfo}

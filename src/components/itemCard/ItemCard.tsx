@@ -2,11 +2,12 @@ import {IItem} from "../../types/IItem";
 
 import "./itemCard.sass"
 import {PropertyRow} from "../propertyRow/PropertyRow";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 interface IProps {
     item: IItem
     isSystemAttr: (name: string) => boolean
+    onClose: () => void
 }
 
 interface IData {
@@ -17,12 +18,11 @@ interface IData {
 
 export const ItemCard = (props: IProps) => {
 
-    const {product, atributesObject, atributesRelation, id, maxQuantity, minQuantity} = props.item
-    const {isSystemAttr} = props
+    const {product, atributesObject, atributesRelation, id, maxQuantity, minQuantity, version} = props.item
+    const {isSystemAttr, onClose} = props
     const [data, setData] = useState<IData[]>([])
 
     const sendData = (e: any) => {
-        console.log("sendData")
         if (window)
             window.opener.postMessage({
                 id: id
@@ -60,7 +60,7 @@ export const ItemCard = (props: IProps) => {
         if (atributesObject) {
             Object.entries(atributesObject)
                 .forEach(value => {
-                    console.log(value)
+                        console.log(value)
                         if (!isSystemAttr(value[0])) {
                             setData(prevState => [...prevState, {
                                 id: "obj " + value[0],
@@ -84,6 +84,9 @@ export const ItemCard = (props: IProps) => {
                         }
                     }
                 )
+        }
+        if (version) {
+            setData(prevState => [...prevState, {id: "ver" + id, firstValue: "Версия", secondValue: version}])
         }
 
     }, [atributesObject, atributesRelation])
@@ -115,6 +118,12 @@ export const ItemCard = (props: IProps) => {
             >
                 Получить id
             </button>
+
+            <div className={"clearFilter"} style={{top: "1rem", right: "1rem"}}
+                 onClick={() => onClose()}
+            >
+                <span className={"clearFilter__action"}>x</span>
+            </div>
         </div>
     )
 }
