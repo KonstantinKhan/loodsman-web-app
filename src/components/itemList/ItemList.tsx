@@ -6,6 +6,7 @@ import {search} from "../urls";
 import {ISearch} from "../../types/ISearch";
 import fetchTypeIcon from "../fetch/fetchTypeIcon";
 import fetchStateIcon from "../fetch/fetchStateIcon";
+import {Spinner} from "../spinner/Spinner";
 
 interface IProps {
     level: number
@@ -53,6 +54,7 @@ const ItemList: React.FC<IProps> = (props) => {
     }, [queryRequest, typesRequest, statesRequest, versionRequest])
 
     const fetchData = (promises: Promise<void>[]) => {
+        setLoading(true)
         if (queryRequest.trim().length > 1 || versionRequest.trim().length > 0 || typesRequest.length > 0 || statesRequest.length > 0) {
             const data: ISearch = {
                 attrCondition: [],
@@ -170,7 +172,7 @@ const ItemList: React.FC<IProps> = (props) => {
         )
     }
 
-    const content = !loading ? render() : null
+    const content = !loading ? render() : <Spinner/>
 
     return (
         <>

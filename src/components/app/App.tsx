@@ -5,6 +5,7 @@ import {IItem} from "../../types/IItem";
 import {Search} from "../search/Search";
 import {IConfig, State, Type} from "../../types/IConfig";
 import {configPath, query} from "../urls";
+import {Spinner} from "../spinner/Spinner";
 
 const App: React.FC = () => {
 

@@ -1,0 +1,54 @@
+.spinner
+  width: 10px
+  height: 10px
+  position: absolute
+  top: calc(50% - 0.8rem)
+  left: calc(50% + 3.5rem)
+  transform: translate(-50%, -50%)
+  border-radius: 50%
+  animation: spinner 0.9s 0.35s ease alternate infinite
+
+  &__title
+    position: absolute
+    top: calc(50%)
+    left: calc(50% - 2rem)
+    font-size: 1.5rem
+    font-weight: bold
+    color: #EEE
+    transform: translate(-50%, -50%)
+
+.spinner:after,
+.spinner:before
+  content: ''
+  position: absolute
+  width: 10px
+  height: 10px
+  border-radius: 50%
+  animation: spinner 0.9s ease alternate infinite
+
+.spinner:before
+  left: -20px
+  animation-delay: 0.2s
+
+.spinner:after
+  right: -20px
+  animation-delay: 0.5s
+
+@keyframes spinner
+  0%
+    box-shadow: 0 15px 0 -15px #eee
+  100%
+    box-shadow: 0 15px 0 #eee
+
+.spinner-container
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  overflow-x: hidden
+  overflow-y: auto
+  background-color: #9E9E9E
+  opacity: 0.8
+  border-radius: 2rem
+  z-index: 10
