@@ -1,0 +1,68 @@
+.tree
+  max-height: 100vh
+  min-height: 100vh
+  overflow-y: auto
+
+  &__container
+    position: relative
+
+  &__icon
+    margin: 0 0.25rem
+
+  &__tooltip
+    visibility: hidden
+    display: flex
+    position: absolute
+    padding: 0.5rem
+    top: 1.75rem
+    align-items: center
+    background-color: #424242
+    color: #F5F5F5
+    border-radius: 6px
+    white-space: nowrap
+    z-index: 1
+    opacity: 0
+    transition: visibility 0.3s, opacity 0.3s
+
+    &:after
+      content: ""
+      position: absolute
+      bottom: 100%
+      left: 0.5rem
+      border-width: 5px
+      border-style: solid
+      border-color: transparent transparent #424242 transparent
+
+  &__container:hover > &__tooltip
+    visibility: visible
+    opacity: 1
+    transition: visibility 0.5s, opacity 0.5s
+    transition-delay: 0.5s
+
+    &:hover
+      visibility: hidden
+      opacity: 0
+      transition-delay: 0s
+
+  &__item
+    display: flex
+    height: 24px
+    align-items: center
+
+    &__button
+      cursor: pointer
+      margin: 0 0.5rem
+
+      &_open
+        transform: rotate(90deg)
+        transform-origin: center
+        transition: transform 0.5s
+
+      &_close
+        transform: rotate(0deg)
+        transition: transform 0.5s
+
+    &__title
+      white-space: nowrap
+      padding-right: 1rem
+      cursor: pointer
