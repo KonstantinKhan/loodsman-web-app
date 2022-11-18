@@ -30,7 +30,10 @@ export const TreeItem: React.FC<ITreeItems> = (props) => {
     }
 
     const getTitleType = () => {
-        return config.types.find(value => value.id === idType)?.name
+        const typeTitle = config.types.find(value => value.id === idType)
+        if (typeTitle) {
+            return typeTitle.name
+        }
     }
 
     const getTitleState = () => {

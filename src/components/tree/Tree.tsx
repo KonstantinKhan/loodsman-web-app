@@ -1,15 +1,16 @@
-import React from "react";
+import React from "react"
 
-import "./tree.sass"
 import {useGetLoodsmanObjectsQuery} from "../../redux";
 import {TreeItem} from "./TreeItem";
+
+import "./tree.sass"
 
 export const Tree: React.FC = (IProps) => {
 
     const {data = []} = useGetLoodsmanObjectsQuery()
 
     return (
-        <ul className={"col-3 col-offset-1 tree"}>
+        <ul className={"col-3 tree"}>
             {
                 data.map(item => {
                     return <TreeItem
