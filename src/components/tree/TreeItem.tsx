@@ -1,61 +1,57 @@
-import React, {useState} from "react";
-import {useGetStateQuery} from "../../redux/stateApi";
-import {useGetTypeQuery} from "../../redux/typeApi";
-import {useGetConfigQuery} from "../../redux/configApi";
-import {useGetLoodsmanObjectQuery} from "../../redux";
-import {IConfig} from "../../types/IConfig";
-import configApp from "../../data/config.json"
+import React, {useEffect, useMemo, useState} from "react";
+import {useLazyGetLoodsmanObjectQuery} from "../../redux";
+import fetchTypeIcon from "../fetch/fetchTypeIcon";
+import fetchStateIcon from "../fetch/fetchStateIcon";
+import {Spinner} from "../spinner/Spinner";
 
 interface ITreeItems {
     id: number,
     title: string,
-    idType: number,
-    idState: number
+    type: string,
+    typeSrc: string,
+    state: string,
+    stateSrc: string
 }
 
 export const TreeItem: React.FC<ITreeItems> = (props) => {
 
-    const {id, title, idType, idState} = props
+    const {id, title, type, typeSrc, state, stateSrc} = props
 
     const [toggle, setToggle] = useState(false)
+    const [children, setChildren] = useState<JSX.Element[]>([])
 
-    const state = useGetStateQuery(idState)
-    const type = useGetTypeQuery(idType)
-    const config: IConfig = useGetConfigQuery().data
-    const items = useGetLoodsmanObjectQuery(id).data
+    const [getObject, {
+        data = [],
+        isSuccess, isUninitialized
+    }] = useLazyGetLoodsmanObjectQuery()
 
     const getToggleClass = () => {
         if (toggle) return "open"
         else return "close"
     }
 
-    const getTitleType = () => {
-        const typeTitle = config.types.find(value => value.id === idType)
-        if (typeTitle) {
-            return typeTitle.name
-        }
-    }
-
-    const getTitleState = () => {
-        return config.states.find((value: any) => value.id === idState)?.name
-    }
-
     const onToggle = () => {
         setToggle(prevState => !prevState)
     }
 
+    useEffect(() => {
+        if (toggle) {
+            getObject(id, true)
+        }
+    }, [toggle])
+
     const renderItems = () => {
-        const list = items?.map(item => {
+        const promises = data?.map(async item => {
             let title = item.product
             let attributeName = ""
 
-            const res = configApp.configTitle.find(i => i.idType === item.idType)
-            if (res) {
-                const result = config.attributes.find(attribute => attribute.id === res.idAttr)
-                if (result) {
-                    attributeName = result.name
-                }
-            }
+            // const res = configApp.configTitle.find(i => i.idType === item.idType)
+            // if (res) {
+            //     const result = config?.attributes.find(attribute => attribute.id === res.idAttr)
+            //     if (result) {
+            //         attributeName = result.name
+            //     }
+            // }
             if (Object.keys(item.atributesObject).includes(attributeName)) {
                 const v = Object.entries(item.atributesObject).find(pair => pair[0] === attributeName)
                 if (v) {
@@ -66,24 +62,52 @@ export const TreeItem: React.FC<ITreeItems> = (props) => {
                 key={item.id}
                 id={item.id}
                 title={title}
-                idType={item.idType}
-                idState={item.idState}/>
+                type={item.type}
+                typeSrc={await fetchTypeIcon(item.idType)}
+                state={item.state}
+                stateSrc={await fetchStateIcon(item.idState)}
+            />
         })
 
-        return (
-            <ul>
-                {list}
-            </ul>
-        )
+        Promise.all(promises)
+            .then(value => {
+                setChildren(value)
+            })
+            .catch(e => console.log(e))
     }
 
-    const content = toggle && renderItems()
+    const childrenElements = useMemo(() => {
+        if (children && children.length > 0) {
+            return (
+                <ul>
+                    {children}
+                </ul>
+            )
+        } else if (toggle && isUninitialized) {
+            return (
+                <div
+                    style={{
+                        position: "relative",
+                        borderRadius: "6px",
+                        overflowY: "auto",
+                        height: "2rem",
+                        margin: "0.25rem",
+                    }}
+                >
+                    <Spinner/>
+                </div>
+            )
+        } else return null
+    }, [children, toggle])
 
-    return (
-        <li style={{
-            paddingLeft: "1.5rem",
-            margin: "0.25rem 0",
-        }}>
+    useEffect(() => {
+        if (isSuccess) {
+            renderItems()
+        }
+    }, [data])
+
+    const renderTreeItem = useMemo(() => {
+        return (
             <div className={"tree__item"}>
                 <i
                     className={`pi pi-angle-right tree__item__button tree__item__button_${getToggleClass()}`}
@@ -92,18 +116,19 @@ export const TreeItem: React.FC<ITreeItems> = (props) => {
                 <div className={"tree__container"}>
                     <img
                         className={"tree__icon"}
-                        src={type.data}
+                        src={typeSrc}
                         alt="type"
                     />
-                    <span className={"tree__tooltip"}>{getTitleType()}</span>
+
+                    <span className={"tree__tooltip"}>{type}</span>
                 </div>
                 <div className={"tree__container"}>
                     <img
                         className={"tree__icon"}
-                        src={state.data}
+                        src={stateSrc}
                         alt="state"
                     />
-                    <span className={"tree__tooltip"}>{getTitleState()}</span>
+                    <span className={"tree__tooltip"}>{state}</span>
                 </div>
                 <div className={"tree__container"} style={{
                     width: "80%",
@@ -116,7 +141,16 @@ export const TreeItem: React.FC<ITreeItems> = (props) => {
                     </span>
                 </div>
             </div>
-            {content}
+        )
+    }, [id, toggle])
+
+    return (
+        <li style={{
+            paddingLeft: "1.5rem",
+            margin: "0.25rem 0",
+        }}>
+            {renderTreeItem}
+            {toggle ? childrenElements : null}
         </li>
     )
 }
